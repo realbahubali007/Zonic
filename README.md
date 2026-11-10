@@ -2,7 +2,7 @@
 
 A bright, modern browser games portal. Zonic shows free HTML5 games from the GamePix partner network on its own pages, with a clean player, fullscreen mode, and a "More to play" list.
 
-**Live site:** https://YOUR-USERNAME.github.io/zonic/`](https://realbahubali007.github.io/Zonic/
+**Live site:** https://realbahubali007.github.io/Zonic/
 
 ---
 
