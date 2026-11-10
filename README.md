@@ -1,108 +1,105 @@
 # Zonic
 
-Free online browser games, playable instantly on desktop and mobile. Zonic is a bright, modern games portal built as a single static page (`index.html`) and hosted on GitHub Pages.
+Free online browser games, playable instantly on desktop and mobile. Zonic is a static website (no build step) that mixes games from **GamePix** and **Playgama** into one portal.
 
 **Live site:** https://realbahubali007.github.io/Zonic/
 
 ---
 
-## Features
-
-- **Game portal home:** hero, category chips, search and a grid of games with cover images.
-- **A page for every game:** each game opens in the Zonic player at its own link, for example `https://realbahubali007.github.io/Zonic/#/play/bus-driver-simulator-3d`.
-- **Smart player:** widescreen games get a wide player, portrait games get a tall one. Fullscreen button included.
-- **Categories and search:** categories are built from the games loaded, and search filters by title.
-- **Load more:** pulls the next 24 games from the live GamePix feed.
-- **Built-in fallback:** if the live feed can't be reached, 13 built-in games still show, so the site is never empty.
-- **Smooth design:** page-load animation, hover effects and page transitions, with reduced-motion settings respected.
-- **Fast:** one small file, no libraries, lazy-loaded covers.
-
-## How it works
-
-`index.html` is the whole website. It contains the design (CSS), the page layout (HTML) and the logic (JavaScript).
-
-| Part | How it works |
-| --- | --- |
-| Game list | Fetched from the GamePix JSON feed: `https://feeds.gamepix.com/v2/json?sid=YOUR_SID&order=quality&page=1&pagination=24` |
-| Playing a game | Opens `https://play.gamepix.com/GAME-NAME/embed?sid=YOUR_SID` in an iframe on the Zonic page |
-| Game pages | Hash links like `#/play/GAME-NAME`, so the browser back button and sharing work |
-| Fallback | A built-in list of 13 games is used when the feed isn't reachable |
-
-## Project files
+## Folder structure
 
 ```
 Zonic/
-├── index.html   The complete website (must keep this exact name)
-└── README.md    This file
+├── index.html                      Page structure (the HTML you see)
+├── ads.txt                         Ad partner lines (must stay at the top level)
+├── README.md                       This guide
+├── .nojekyll                       Tells GitHub Pages to publish files as they are
+└── assets/
+    ├── css/
+    │   ├── style.css               Layout, colours, fonts
+    │   └── animations.css          All motion and hover effects
+    ├── js/
+    │   ├── config.js               IDs, on/off switches, page size (connection settings)
+    │   ├── sources.js              Converts each network's data into one game format
+    │   └── app.js                  Page logic: search, categories, player, loading
+    └── data/
+        ├── gamepix-fallback.json   Built-in GamePix games (shown if the live feed is blocked)
+        └── playgama.json           Playgama game library (2,836 games)
 ```
 
-> **Important:** `index.html` must be in the top level of the repository, spelled in lowercase. GitHub Pages shows `README.md` instead of the site if it can't find it.
+## What to edit for each job
 
-## Deploy on GitHub Pages
+| I want to… | Edit this file |
+| --- | --- |
+| Change text, headings or page structure | `index.html` |
+| Change colours, spacing, fonts, layout | `assets/css/style.css` |
+| Change animations or hover effects | `assets/css/animations.css` |
+| Change the GamePix ID or Playgama ID | `assets/js/config.js` |
+| Turn GamePix or Playgama on or off | `assets/js/config.js` (`enabled: true/false`) |
+| Change how many games load per click | `assets/js/config.js` (`perPage`) |
+| Add games by hand (GamePix fallback list) | `assets/data/gamepix-fallback.json` |
+| Update the Playgama library | `assets/data/playgama.json` |
+| Add a new game network | `config.js` + `sources.js` + `app.js` |
+| Add ad partner lines | `ads.txt` |
 
-1. Create a public repository named `Zonic`.
-2. Upload `index.html` and `README.md` to the top level (**Add file → Upload files → Commit changes**).
-3. Open **Settings → Pages**.
-4. Under **Build and deployment**, set **Source** to **Deploy from a branch**.
-5. Choose the **main** branch and the **/ (root)** folder, then click **Save**.
-6. Wait one to two minutes. The site goes live at https://realbahubali007.github.io/Zonic/
+## Deploy on GitHub Pages (free)
 
-To update the site, upload the new `index.html` with the same name and commit. Pages redeploys automatically (watch progress under the **Actions** tab).
+1. Unzip the project. Open the `Zonic` folder so you can see `index.html` inside it.
+2. In your GitHub repository, choose **Add file → Upload files**.
+3. Drag in **everything inside the folder** (`index.html`, `ads.txt`, `README.md`, `.nojekyll` and the whole `assets` folder). Do not upload the outer `Zonic` folder itself.
+4. Click **Commit changes**.
+5. Open **Settings → Pages**. Set **Source** to **Deploy from a branch**, choose **main** and **/ (root)**, then **Save**.
+6. Wait one to two minutes, then open your site. Hard refresh with Ctrl+Shift+R if you see an old version.
 
-## Settings you can change
+`index.html` must be at the top level of the repository, spelled in lowercase, or GitHub shows this README instead of the site.
 
-Open `index.html` and look near the top of the script.
+> **Hidden file:** `.nojekyll` starts with a dot, so your computer may hide it. The site works without it, but include it if you can see it.
 
-**Partner ID:**
+## Run on your own computer
 
-```js
-var SID='Z1887';
+Opening `index.html` by double-click will not load the game lists, because browsers block local file requests. Use a small local server instead:
+
+```
+cd Zonic
+python3 -m http.server 8000
 ```
 
-Replace the value with your own GamePix `sid`.
+Then open http://localhost:8000
 
-**Games per load:**
+## ads.txt
 
-```js
-var PER=24;
-```
+- `ads.txt` must be at the **root** of your website address, for example `https://yourdomain/ads.txt`. That is why it sits at the top level and not inside `assets`.
+- On a GitHub project address like `realbahubali007.github.io/Zonic/`, the file ends up at `.../Zonic/ads.txt`, which ad systems usually don't check. For it to count, the site needs its own domain, or a repository named `YOURUSERNAME.github.io`.
+- Paste the exact lines from your GamePix and Playgama dashboards under the comments. Do not invent lines. Lines starting with `#` are ignored.
 
-**Built-in fallback games:** edit the `SNAP` list. Each entry is `[title, game-name, category, orientation]`:
+## How games load
 
-```js
-['Bus Driver Simulator 3D','bus-driver-simulator-3d','simulation','all']
-```
-
-The `game-name` is the `namespace` value from the feed. Orientation is `all` or `portrait`.
+- **GamePix:** the built-in list shows first, then the live feed adds more. Each game opens with `https://play.gamepix.com/GAME-NAME/embed?sid=YOUR_SID`.
+- **Playgama:** games come from `assets/data/playgama.json` and open with `https://playgama.com/export/game/GAME-NAME?clid=YOUR_ID`.
+- Both are mixed in one grid. Every game has its own link, for example `#/play/bus-driver-simulator-3d` or `#/play/pg-game-name`.
+- To refresh Playgama games, download a new export from your Playgama Partners dashboard and convert it into `playgama.json`.
 
 ## Troubleshooting
 
 | Problem | What to do |
 | --- | --- |
-| The site shows this README instead of the games | `index.html` is missing, misnamed (for example `index (1).html`) or inside a subfolder. Rename it to exactly `index.html` and keep it in the top level. |
-| Settings → Pages shows the wrong folder | Set the branch to `main` and the folder to `/ (root)`. |
-| 404 page | Wait a few minutes, then confirm Pages is turned on in Settings. |
-| Changes don't appear | Hard refresh with Ctrl+Shift+R (Cmd+Shift+R on Mac), or open the site in a private window. |
-| A game area is blank | Open that game's embed link in a new tab. If it also fails, check your GamePix property settings for allowed site addresses. |
-| Only 13 games and no "Load more" | The live feed couldn't be read by the browser, so the built-in games are shown. Games still play. A backend (see roadmap) fixes this. |
-| Cover image missing | The card shows a colour gradient instead. The game still works. |
-
-## Roadmap
-
-- [ ] Backend that pulls the full game feed automatically (Cloudflare)
-- [ ] Live features such as players-online counts and leaderboards
-- [ ] Separate pages and sitemap for better search engine results
-- [ ] Fluid scrolling
-- [ ] Privacy policy and cookie notice
+| Site shows this README | `index.html` is missing, misnamed or in a subfolder. Keep it at the top level. |
+| Page loads but no games and no styles | The `assets` folder was not uploaded. Upload the whole folder with its subfolders. |
+| Only 13 GamePix games, no Playgama | Check that `assets/data/playgama.json` exists with that exact lowercase name. |
+| A game area is blank | Open the game's embed link in a new tab. If it also fails, check the allowed site address in that network's dashboard. |
+| Changes not showing | Wait a minute, then hard refresh (Ctrl+Shift+R or Cmd+Shift+R). |
+| Everything is empty | Check the browser console (F12). A wrong path or an edit mistake in `config.js` is the usual cause. |
 
 ## Notes
 
-- The `sid` is a public partner ID, not a password. Never commit passwords, API secrets or private keys to this repository.
-- Games, names and artwork belong to their developers and GamePix. Zonic embeds them through the official embed links, so ads and revenue tracking stay intact.
-- Check the GamePix publisher terms for rules on branding and allowed use of the feed.
-- If your site shows ads or tracks visitors, add a privacy policy and cookie notice as required where your visitors live.
-- https://realbahubali007.github.io/Zonic/ads.txt page dedicated to the file ads.txt for verifying ads.txt values from https://my.gamepix.com/properties
+- `sid` and `clid` are public partner IDs, not passwords. Never put passwords, API secrets or private keys in this repository.
+- Games, names and artwork belong to their developers and the networks. Zonic embeds them through official embed links, so ads and revenue tracking stay intact.
+- Read each network's publisher terms about branding, allowed site addresses and combining networks.
+- If your site shows ads or tracks visitors, add a privacy policy and cookie notice where required.
 
-## Credits
+## Roadmap
 
-Games provided by [GamePix](https://www.gamepix.com/).
+- [ ] Cloudflare backend that pulls full game feeds automatically
+- [ ] Live features such as players-online counts and leaderboards
+- [ ] GameDistribution or other networks as extra sources
+- [ ] Privacy policy, cookie notice and sitemap
