@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zonic: Free Online Games</title>
+<meta name="description" content="Play thousands of free online browser games on Zonic. No downloads, no sign-up. Instant play on desktop and mobile.">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:title" content="Zonic: Free Online Games">
+<meta property="og:description" content="Play thousands of free browser games instantly. No downloads, no sign-up.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎮%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://img.gamepix.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<script>document.documentElement.className+=' js'</script>
+</head>
+<body>
+<div class="progress" id="progress" aria-hidden="true"></div>
+<div class="mesh" aria-hidden="true"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i></div>
+
+<header class="site-header" id="siteHeader">
+  <div class="wrap bar">
+    <a class="logo" href="#" id="home"><span class="mark"></span>Zonic</a>
+    <nav class="nav" aria-label="Main">
+      <a href="#" data-go="homeView">Home</a>
+      <a href="#library" data-go="library">Library</a>
+      <a href="#" data-random>Random game</a>
+      <a href="about.html">About</a>
+    </nav>
+    <input class="search" id="q" type="search" placeholder="Search games" aria-label="Search games" autocomplete="off">
+  </div>
+</header>
+
+<div class="wrap">
+  <main id="main">
+    <section id="homeView">
+      <div class="hero">
+        <div>
+          <span class="eyebrow"><i class="dot"></i>Free to play. No download.</span>
+          <h1>Play thousands of <span class="grad">free games</span>, instantly.</h1>
+          <p class="lead">Action, puzzle, racing, sports and more. Jump straight in on your phone, tablet or computer, with no sign-up.</p>
+          <div class="cta">
+            <a class="btn primary" href="#library" data-go="library">Browse library</a>
+            <a class="btn ghost" href="#" data-random>Surprise me</a>
+          </div>
+          <div class="stats">
+            <div class="stat"><b id="statGames">1,000+</b><span>Games to play</span></div>
+            <div class="stat"><b>100%</b><span>Free forever</span></div>
+            <div class="stat"><b>0</b><span>Downloads needed</span></div>
+          </div>
+        </div>
+        <div class="visual" aria-hidden="true">
+          <div class="tile t1">🏎️</div><div class="tile t2">🧩</div><div class="tile t3">🎯</div><div class="tile t4">🚀</div>
+        </div>
+      </div>
+
+      <section class="reveal" aria-labelledby="fh">
+        <div class="sec-head"><div><h2 id="fh">Featured games</h2><p class="muted">Hand-picked to get you started.</p></div>
+          <a class="linkbtn" href="#library" data-go="library">See all &rarr;</a></div>
+        <div class="featured" id="featured"></div>
+      </section>
+
+      <section class="reveal" id="library" aria-labelledby="lh">
+        <div class="sec-head">
+          <div><h2 id="lh">Game library</h2><p class="muted" id="count">Loading games…</p></div>
+          <div class="lib-tools">
+            <button class="fbtn" id="filterBtn" type="button" aria-expanded="false" aria-controls="fpanel">Filters <span class="badge" id="fbadge" hidden>0</span></button>
+            <label class="sortwrap"><span class="sr">Sort games</span>
+              <select id="sort"><option value="mix">Recommended</option><option value="az">A to Z</option><option value="za">Z to A</option></select>
+            </label>
+          </div>
+        </div>
+        <div class="chips" id="chips" role="group" aria-label="Categories"></div>
+        <div class="fpanel" id="fpanel" hidden>
+          <div class="fgroup"><b>Screen</b>
+            <div class="seg" role="group" aria-label="Screen shape">
+              <button type="button" data-filter="ori" data-value="all" aria-pressed="true">All</button>
+              <button type="button" data-filter="ori" data-value="landscape" aria-pressed="false">Landscape</button>
+              <button type="button" data-filter="ori" data-value="portrait" aria-pressed="false">Portrait</button>
+            </div>
+          </div>
+          <button class="linkbtn" id="clearBtn" type="button" hidden>Clear all filters</button>
+        </div>
+        <div class="status" id="status" role="status">Loading games…</div>
+        <div class="grid" id="grid"></div>
+        <button class="more" id="more" type="button" hidden>Load more games</button>
+      </section>
+    </section>
+
+    <section id="playView" hidden>
+      <a class="back" href="#" id="back">&larr; All games</a>
+      <div class="stage" id="stage"></div>
+      <div class="meta">
+        <div><h1 id="pTitle"></h1><span class="tag" id="pCat"></span><span class="tag">Free to play</span></div>
+        <button class="btn" id="fs" type="button">Fullscreen</button>
+      </div>
+      <p class="desc" id="pDesc"></p>
+      <h2 class="sec">More games</h2>
+      <div class="grid" id="related"></div>
+    </section>
+  </main>
+  <noscript><p>Zonic needs JavaScript turned on to load games.</p></noscript>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="fgrid">
+      <div class="fabout">
+        <a class="logo" href="#" data-go="homeView"><span class="mark"></span>Zonic</a>
+        <p>A free games portal for everyone. Play instantly in your browser, on any device.</p>
+      </div>
+      <div><h4>Explore</h4><ul>
+        <li><a href="#" data-go="homeView">Home</a></li>
+        <li><a href="#library" data-go="library">Game library</a></li>
+        <li><a href="#" data-random>Random game</a></li>
+        <li><a href="about.html">About Zonic</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul></div>
+      <div><h4>Legal</h4><ul>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Use</a></li>
+        <li><a href="cookies.html">Cookie Policy</a></li>
+        <li><a href="dmca.html">Copyright / DMCA</a></li>
+      </ul></div>
+    </div>
+    <div class="fbottom">
+      <span>&copy; <span data-year>2026</span> <span data-owner>Dharamveer</span>. All rights reserved. Games and artwork belong to their respective owners and providers.</span>
+      <nav aria-label="Legal"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="dmca.html">DMCA</a></nav>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/site.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/sources.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/ui.js"></script>
+</body>
+</html>
