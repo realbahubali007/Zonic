@@ -106,14 +106,14 @@ footer{border-top:1px solid var(--line);padding:26px 0 44px;color:var(--mute);fo
   </main>
   <noscript><p>Zonic needs JavaScript turned on to load games.</p></noscript>
 </div>
-<footer><div class="wrap">Zonic. Games provided by GamePix. All game names and artwork belong to their owners.</div></footer>
+<footer><div class="wrap">Zonic. Games provided by GamePix and Playgama. All game names and artwork belong to their owners.</div></footer>
 
 <script>
 (function(){
 'use strict';
 var SID='Z1887';
 var API='https://feeds.gamepix.com/v2/json';
-var PER=48;
+var PER=24;
 
 var SNAP=[
 ['Bus Driver Simulator 3D','bus-driver-simulator-3d','simulation','all'],
@@ -132,12 +132,15 @@ var SNAP=[
 ];
 
 var $=function(id){return document.getElementById(id)};
-var games=[],byNs={},nextUrl=null,cat='all',query='',live=false;
+var CLID='p_f82be468-dd56-4e09-b7f2-0f702cc6c950';
+var games=[],gp=[],pg=[],byNs={},nextUrl=null,cat='all',query='',live=false,pgLoaded=false,shown=PER;
 
 function coverUrl(ns){return 'https://img.gamepix.com/games/'+ns+'/cover/'+ns+'.png?w=320'}
 function pretty(s){s=String(s||'').replace(/-/g,' ');return s.charAt(0).toUpperCase()+s.slice(1)}
 function hashIdx(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return h%5}
-function add(g){if(!g.ns||byNs[g.ns])return false;byNs[g.ns]=g;games.push(g);return true}
+function add(g,src){if(!g.ns||byNs[g.ns])return false;byNs[g.ns]=g;(src==='pg'?pg:gp).push(g);return true}
+function rebuild(){games=[];var n=Math.max(gp.length,pg.length);for(var i=0;i<n;i++){if(gp[i])games.push(gp[i]);if(pg[i])games.push(pg[i])}}
+function fromPG(r){return{title:r.t,ns:'pg-'+r.s,cat:r.c,orient:r.o,desc:r.d||'',img:r.i,embed:'https://playgama.com/export/game/'+r.s+'?clid='+CLID}}
 function fromSnap(){SNAP.forEach(function(r){add({title:r[0],ns:r[1],cat:r[2],orient:r[3],desc:'',img:coverUrl(r[1])})})}
 function fromFeed(it){return{title:it.title||pretty(it.namespace),ns:it.namespace,cat:it.category||'games',orient:it.orientation||'all',desc:it.description||'',img:it.banner_image||coverUrl(it.namespace)}}
 
@@ -172,7 +175,7 @@ function renderChips(){
     var b=document.createElement('button');b.type='button';b.className='chip';
     b.textContent=k==='all'?'All games':pretty(k);
     b.setAttribute('aria-pressed',String(k===cat));
-    b.onclick=function(){cat=k;renderChips();renderGrid()};
+    b.onclick=function(){cat=k;shown=PER;renderChips();renderGrid()};
     box.appendChild(b);
   });
 }
@@ -181,10 +184,10 @@ function renderGrid(){
   var grid=$('grid'),list=filtered();
   grid.innerHTML='';
   var frag=document.createDocumentFragment();
-  list.forEach(function(g){frag.appendChild(card(g))});
+  list.slice(0,shown).forEach(function(g){frag.appendChild(card(g))});
   grid.appendChild(frag);
   $('status').textContent=list.length?'':'No games found. Try another search or category.';
-  $('more').hidden=!(nextUrl&&cat==='all'&&!query.trim());
+  $('more').hidden=!(list.length>shown||(nextUrl&&cat==='all'&&!query.trim()));
 }
 
 function loadPage(url){
@@ -195,9 +198,9 @@ function loadPage(url){
     nextUrl=j.next_url||null;live=true;
   })
   .catch(function(){
-    if(!games.length){fromSnap();nextUrl=null}
+    if(!gp.length){fromSnap();nextUrl=null}
   })
-  .then(function(){btn.disabled=false;renderChips();renderGrid()});
+  .then(function(){btn.disabled=false;rebuild();renderChips();renderGrid()});
 }
 
 function startUrl(){return API+'?sid='+encodeURIComponent(SID)+'&order=quality&page=1&pagination='+PER}
@@ -215,7 +218,7 @@ function showPlay(ns){
   f.title=g.title;
   f.allow='fullscreen; autoplay; gamepad; accelerometer; gyroscope';
   f.setAttribute('allowfullscreen','');
-  f.src='https://play.gamepix.com/'+encodeURIComponent(ns)+'/embed?sid='+encodeURIComponent(SID);
+  f.src=g.embed||('https://play.gamepix.com/'+encodeURIComponent(ns)+'/embed?sid='+encodeURIComponent(SID));
   st.appendChild(f);
   var rel=games.filter(function(x){return x.ns!==ns&&x.cat===g.cat});
   if(rel.length<8)rel=rel.concat(games.filter(function(x){return x.ns!==ns&&x.cat!==g.cat}));
@@ -230,28 +233,40 @@ function showHome(){
   document.title='Zonic: Free Online Games';
 }
 
+function loadPG(){
+  return fetch('playgama.json').then(function(r){if(!r.ok)throw new Error('pg');return r.json()})
+  .then(function(a){a.forEach(function(r){add(fromPG(r),'pg')})})
+  .catch(function(){})
+  .then(function(){pgLoaded=true;rebuild();renderChips();renderGrid();route()});
+}
+
 function route(){
   var m=/^#\/play\/([a-z0-9._-]+)$/i.exec(location.hash);
+  if(m&&/^pg-/.test(m[1])&&!pgLoaded)return;
   transition(function(){m?showPlay(m[1]):showHome()});
 }
 
-$('home').addEventListener('click',function(e){e.preventDefault();query='';$('q').value='';cat='all';history.pushState(null,'',location.pathname+location.search);route();renderChips();renderGrid()});
+$('home').addEventListener('click',function(e){e.preventDefault();query='';$('q').value='';cat='all';shown=PER;history.pushState(null,'',location.pathname+location.search);route();renderChips();renderGrid()});
 $('back').addEventListener('click',function(e){e.preventDefault();history.pushState(null,'',location.pathname+location.search);route()});
 $('q').addEventListener('input',function(){
-  query=this.value;
+  query=this.value;shown=PER;
   if(!$('playView').hidden){history.pushState(null,'',location.pathname+location.search);route()}
   renderGrid();
 });
-$('more').addEventListener('click',function(){if(nextUrl)loadPage(nextUrl)});
+$('more').addEventListener('click',function(){
+  shown+=PER;
+  if(nextUrl&&cat==='all'&&!query.trim())loadPage(nextUrl);else{renderChips();renderGrid()}
+});
 $('fs').addEventListener('click',function(){
   var s=$('stage');
   try{(s.requestFullscreen||s.webkitRequestFullscreen).call(s)}catch(e){}
 });
 window.addEventListener('hashchange',route);
 
-fromSnap();
+fromSnap();rebuild();
 renderChips();renderGrid();route();
 loadPage(startUrl());
+loadPG();
 })();
 </script>
 </body>
