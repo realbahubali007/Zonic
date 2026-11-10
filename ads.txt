@@ -1,9 +1,9 @@
 # ads.txt for Zonic (https://realbahubali007.github.io/Zonic/)
-# GamePix site: Zonic (ID: Z1887)
+# GamePix site: Zonic (ID: Z1I42 - Zonic)
 #
 # Format of each line:  domain, seller-account-ID, DIRECT-or-RESELLER, certification-authority-ID
 #
-#gpx-property-Z1887
+#gpx-property-Z1I42
 #gpx-last-updated-2024-11-21
 #gpx-reviq
 rev.iq, Kf077RYmx6XvWT8mhSbYq7LIQTU, DIRECT
