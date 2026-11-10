@@ -1,0 +1,8 @@
+# ads.txt for Zonic (https://realbahubali007.github.io/Zonic/)
+# GamePix site: Zonic (ID: Z1887)
+#
+# Format of each line:  domain, seller-account-ID, DIRECT-or-RESELLER, certification-authority-ID
+#
+# Paste the exact ads.txt lines supplied by GamePix (or your other ad partners) below,
+# one per line, with no extra characters. Delete this comment block only if you want to.
+# Lines that start with # are ignored.
