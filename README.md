@@ -101,6 +101,7 @@ The `game-name` is the `namespace` value from the feed. Orientation is `all` or 
 - Games, names and artwork belong to their developers and GamePix. Zonic embeds them through the official embed links, so ads and revenue tracking stay intact.
 - Check the GamePix publisher terms for rules on branding and allowed use of the feed.
 - If your site shows ads or tracks visitors, add a privacy policy and cookie notice as required where your visitors live.
+- https://realbahubali007.github.io/Zonic/ads.txt page dedicated to the file ads.txt for verifying ads.txt values from https://my.gamepix.com/properties
 
 ## Credits
 
